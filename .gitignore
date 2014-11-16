@@ -2,3 +2,8 @@
 .project
 bin/*
 .classpath
+input/in1
+
+nlp_file.properties
+
+nlpjars.tar.gz
