@@ -22,7 +22,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class AugurMapreduceTool extends Configured implements Tool {
+public class AugurMapreduceTool extends Configured implements Tool { 
 
 	public static class Map extends Mapper<Text, Text, Text, IndividualMetric> {
 		public void map(Text movieName, Text comment, Context context)
