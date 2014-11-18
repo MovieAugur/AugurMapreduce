@@ -199,8 +199,7 @@ public class AugurMapreduceTool extends Configured implements Tool {
 				"s3://augurframework/include/stanford-corenlp-3.4.1-models.jar"));
 		job.addFileToClassPath(new Path(
 				"s3://augurframework/include/nlp_file.properties"));
-//
-//		GenericOptionsParser.getLibJars(getConf());
+		
 		String[] args = new GenericOptionsParser(argsFull).getRemainingArgs();
 
 		job.setJarByClass(AugurMapreduceTool.class);
