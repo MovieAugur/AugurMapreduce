@@ -224,7 +224,7 @@ public class AugurMapreduceTool extends Configured implements Tool {
 }
 
 enum MetricType {
-	None, TwitterComment, AudienceComment, CriticsComment, AudienceScore, CriticsScore, VideoComment, VideoLikes, VideoDislikes, VideoViews, BoxOfficeCollection
+	None, TwitterComment, AudienceComment, CriticsComment, AudienceScore, CriticsScore, VideoComment, VideoViews, VideoLikes, VideoDislikes, BoxOfficeCollection
 }
 
 enum CommentSource {
@@ -243,15 +243,18 @@ class MovieMetric implements Writable {
 	Map<MetricType, DoubleWritable> metrics = new HashMap<MetricType, DoubleWritable>();
 	String[] MetricTypeString = { "None", "TwitterComment", "AudienceComment",
 			"CriticsComment", "AudienceScore", "CriticsScore", "VideoComment",
-			"VideoLikes", "VideoDislikes", "VideoViews", "BoxOfficeCollection" };
+			"VideoViews", "VideoLikes", "VideoDislikes", "BoxOfficeCollection" };
 
 	public String toString() {
 		String str = new String();
 		for (MetricType key : MetricType.values()) {
 			if (metrics.containsKey(key)) {
-				str = str + MetricTypeString[key.ordinal()] + "=" + metrics.get(key).toString() + " ";
+//				str = str + MetricTypeString[key.ordinal()] + "=" + metrics.get(key).toString() + " ";
+				str = str + metrics.get(key).toString() + "\t";
 			}
 		}
+		// Movie Name \t TwitterComment \t AudienceComment \t CriticsComment \t
+		// AudienceScore \
 		return str;
 	}
 
