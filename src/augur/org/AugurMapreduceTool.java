@@ -79,7 +79,15 @@ public class AugurMapreduceTool extends Configured implements Tool {
 				if (type.charAt(1) == 'T') {
 					src = CommentSource.Twitter;
 				}
-				sentiment = Double.parseDouble(data);
+				if (type.charAt(1) == 'W') {
+					src = CommentSource.Wiki;
+					exTyp = ExtraCommentType.BoxOffice;
+					sentiment = Double.parseDouble(data)/10000000;
+				}
+				else {
+					sentiment = Double.parseDouble(data);
+				}
+//				sentiment = Double.parseDouble(data);
 			}
 			context.write(movieName, new IndividualMetric(src, typ, exTyp,
 					sentiment));
@@ -116,6 +124,11 @@ public class AugurMapreduceTool extends Configured implements Tool {
 						}
 						if (metric.exType == ExtraCommentType.Views) {
 							type = MetricType.VideoViews;
+						}
+					}
+					if(metric.source == CommentSource.Wiki) {
+						if(metric.exType == ExtraCommentType.BoxOffice) {
+							type = MetricType.BoxOfficeCollection;
 						}
 					}
 					movieMetric.metrics.put(type, new DoubleWritable(metric.metricValue.get()));
