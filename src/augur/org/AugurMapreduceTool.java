@@ -204,17 +204,17 @@ public class AugurMapreduceTool extends Configured implements Tool {
 	public int run(String[] argsFull) throws Exception {
 		Job job = Job.getInstance(getConf());
 
-		job.addArchiveToClassPath(new Path(
-				"s3://augurframework/include/ejml-0.23.jar"));
-		job.addArchiveToClassPath(new Path(
-				"s3://augurframework/include/stanford-corenlp-3.4.1.jar"));
-		job.addArchiveToClassPath(new Path(
-				"s3://augurframework/include/stanford-corenlp-3.4.1-models.jar"));
-		job.addFileToClassPath(new Path(
-				"s3://augurframework/include/nlp_file.properties"));
-		
 		String[] args = new GenericOptionsParser(argsFull).getRemainingArgs();
-
+		
+		job.addArchiveToClassPath(new Path(args[0] + "ejml-0.23.jar"));
+//				"s3://augurframework/include/ejml-0.23.jar"));
+		job.addArchiveToClassPath(new Path(args[0] + "stanford-corenlp-3.4.1.jar"));
+//				"s3://augurframework/include/stanford-corenlp-3.4.1.jar"));
+		job.addArchiveToClassPath(new Path(args[0] + "stanford-corenlp-3.4.1-models.jar"));
+//				"s3://augurframework/include/stanford-corenlp-3.4.1-models.jar"));
+		job.addFileToClassPath(new Path(args[0] + "nlp_file.properties"));
+//				"s3://augurframework/include/nlp_file.properties"));
+		
 		job.setJarByClass(AugurMapreduceTool.class);
 
 		job.setMapOutputKeyClass(Text.class);
@@ -228,8 +228,8 @@ public class AugurMapreduceTool extends Configured implements Tool {
 		job.setInputFormatClass(KeyValueTextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 
-		FileInputFormat.addInputPath(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		FileInputFormat.addInputPath(job, new Path(args[1]));
+		FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
 		job.waitForCompletion(true);
 		return 0;
