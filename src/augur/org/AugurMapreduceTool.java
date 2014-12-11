@@ -27,6 +27,11 @@ public class AugurMapreduceTool extends Configured implements Tool {
 	public static class Map extends Mapper<Text, Text, Text, IndividualMetric> {
 		public void map(Text movieName, Text comment, Context context)
 				throws IOException, InterruptedException {
+			if (comment == null || comment.toString().trim() == null
+					|| comment.toString().equals("")
+					|| comment.toString().trim().equals("")) {
+				return;
+			}
 			String type = comment.toString().substring(0, 3);
 			String data = comment.toString().substring(4);
 			NLP nlp = new NLP();
@@ -82,12 +87,11 @@ public class AugurMapreduceTool extends Configured implements Tool {
 				if (type.charAt(1) == 'W') {
 					src = CommentSource.Wiki;
 					exTyp = ExtraCommentType.BoxOffice;
-					sentiment = Double.parseDouble(data)/10000000;
-				}
-				else {
+					sentiment = Double.parseDouble(data) / 10000000;
+				} else {
 					sentiment = Double.parseDouble(data);
 				}
-//				sentiment = Double.parseDouble(data);
+				// sentiment = Double.parseDouble(data);
 			}
 			context.write(movieName, new IndividualMetric(src, typ, exTyp,
 					sentiment));
@@ -126,12 +130,13 @@ public class AugurMapreduceTool extends Configured implements Tool {
 							type = MetricType.VideoViews;
 						}
 					}
-					if(metric.source == CommentSource.Wiki) {
-						if(metric.exType == ExtraCommentType.BoxOffice) {
+					if (metric.source == CommentSource.Wiki) {
+						if (metric.exType == ExtraCommentType.BoxOffice) {
 							type = MetricType.BoxOfficeCollection;
 						}
 					}
-					movieMetric.metrics.put(type, new DoubleWritable(metric.metricValue.get()));
+					movieMetric.metrics.put(type, new DoubleWritable(
+							metric.metricValue.get()));
 				}
 				if (metric.type == CommentType.Text) {
 					double tempMetricValue = 0;
@@ -174,23 +179,31 @@ public class AugurMapreduceTool extends Configured implements Tool {
 							tempMetricValue));
 				}
 			}
-			double Avg = movieMetric.metrics.get(MetricType.AudienceComment)
-					.get() / aCount;
-			movieMetric.metrics.put(MetricType.AudienceComment,
-					new DoubleWritable(Avg));
-			Avg = movieMetric.metrics.get(MetricType.CriticsComment).get()
-					/ cCount;
-			movieMetric.metrics.put(MetricType.CriticsComment,
-					new DoubleWritable(Avg));
-			Avg = movieMetric.metrics.get(MetricType.TwitterComment).get()
-					/ tCount;
-			movieMetric.metrics.put(MetricType.TwitterComment,
-					new DoubleWritable(Avg));
-			Avg = movieMetric.metrics.get(MetricType.VideoComment).get()
-					/ yCount;
-			movieMetric.metrics.put(MetricType.VideoComment,
-					new DoubleWritable(Avg));
-
+			double Avg;
+			if (aCount != 0) {
+				Avg = movieMetric.metrics.get(MetricType.AudienceComment).get()
+						/ aCount;
+				movieMetric.metrics.put(MetricType.AudienceComment,
+						new DoubleWritable(Avg));
+			}
+			if (cCount != 0) {
+				Avg = movieMetric.metrics.get(MetricType.CriticsComment).get()
+						/ cCount;
+				movieMetric.metrics.put(MetricType.CriticsComment,
+						new DoubleWritable(Avg));
+			}
+			if (tCount != 0) {
+				Avg = movieMetric.metrics.get(MetricType.TwitterComment).get()
+						/ tCount;
+				movieMetric.metrics.put(MetricType.TwitterComment,
+						new DoubleWritable(Avg));
+			}
+			if (yCount != 0) {
+				Avg = movieMetric.metrics.get(MetricType.VideoComment).get()
+						/ yCount;
+				movieMetric.metrics.put(MetricType.VideoComment,
+						new DoubleWritable(Avg));
+			}
 			context.write(movieName, new Text(movieMetric.toString()));
 		}
 	}
@@ -205,16 +218,18 @@ public class AugurMapreduceTool extends Configured implements Tool {
 		Job job = Job.getInstance(getConf());
 
 		String[] args = new GenericOptionsParser(argsFull).getRemainingArgs();
-		
+
 		job.addArchiveToClassPath(new Path(args[0] + "ejml-0.23.jar"));
-//				"s3://augurframework/include/ejml-0.23.jar"));
-		job.addArchiveToClassPath(new Path(args[0] + "stanford-corenlp-3.4.1.jar"));
-//				"s3://augurframework/include/stanford-corenlp-3.4.1.jar"));
-		job.addArchiveToClassPath(new Path(args[0] + "stanford-corenlp-3.4.1-models.jar"));
-//				"s3://augurframework/include/stanford-corenlp-3.4.1-models.jar"));
+		// "s3://augurframework/include/ejml-0.23.jar"));
+		job.addArchiveToClassPath(new Path(args[0]
+				+ "stanford-corenlp-3.4.1.jar"));
+		// "s3://augurframework/include/stanford-corenlp-3.4.1.jar"));
+		job.addArchiveToClassPath(new Path(args[0]
+				+ "stanford-corenlp-3.4.1-models.jar"));
+		// "s3://augurframework/include/stanford-corenlp-3.4.1-models.jar"));
 		job.addFileToClassPath(new Path(args[0] + "nlp_file.properties"));
-//				"s3://augurframework/include/nlp_file.properties"));
-		
+		// "s3://augurframework/include/nlp_file.properties"));
+
 		job.setJarByClass(AugurMapreduceTool.class);
 
 		job.setMapOutputKeyClass(Text.class);
@@ -262,8 +277,11 @@ class MovieMetric implements Writable {
 		String str = new String();
 		for (MetricType key : MetricType.values()) {
 			if (metrics.containsKey(key)) {
-//				str = str + MetricTypeString[key.ordinal()] + "=" + metrics.get(key).toString() + " ";
+				// str = str + MetricTypeString[key.ordinal()] + "=" +
+				// metrics.get(key).toString() + " ";
 				str = str + metrics.get(key).toString() + "\t";
+			} else if(key != MetricType.None){
+				str = str + "0" + "\t";
 			}
 		}
 		// Movie Name \t TwitterComment \t AudienceComment \t CriticsComment \t
