@@ -1,3 +1,7 @@
+/*
+ * The MapReduce program that runs on hadoop. This is invoked by the EMR cluster that the 
+ * framework instantiates.
+ */
 package augur.org;
 
 import java.io.DataInput;
@@ -343,47 +347,3 @@ class IndividualMetric implements Writable {
 		metricValue.write(out);
 	}
 }
-
-// class MovieComment implements Writable {
-//
-// MovieComment(CommentSource cSrc, CommentType cType,
-// ExtraCommentType cExType, String comment, double num) {
-// source = cSrc;
-// type = cType;
-// exType = cExType;
-//
-// if (cType == CommentType.Text) {
-// textComment = new Text(comment);
-// numComment = new DoubleWritable();
-// } else if (cType == CommentType.Numeric) {
-// textComment = new Text();
-// numComment = new DoubleWritable(num);
-// }
-// }
-//
-// CommentSource source;
-// CommentType type;
-// ExtraCommentType exType;
-//
-// Text textComment;
-//
-// DoubleWritable numComment;
-//
-// @Override
-// public void readFields(DataInput in) throws IOException {
-// source = CommentSource.values()[in.readInt()];
-// type = CommentType.values()[in.readInt()];
-// exType = ExtraCommentType.values()[in.readInt()];
-// textComment.readFields(in);
-// numComment.readFields(in);
-// }
-//
-// @Override
-// public void write(DataOutput out) throws IOException {
-// out.writeInt(source.ordinal());
-// out.writeInt(type.ordinal());
-// out.writeInt(exType.ordinal());
-// textComment.write(out);
-// numComment.write(out);
-// }
-// }
